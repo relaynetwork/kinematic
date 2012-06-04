@@ -1,4 +1,4 @@
-(defproject dynamic-web "1.0.0-SNAPSHOT"
+(defproject com.relaynetwork/kinematic "1.0.0-SNAPSHOT"
   :description "Dynamic Web Development with Clojure"
   :dev-dependencies [[swank-clojure                        "1.4.2"]]
   :dependencies     [[org.clojure/clojure                  "1.3.0"]
