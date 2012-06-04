@@ -1,7 +1,8 @@
 (ns kinematic.core
   (:require
    [clojure.data.json   :as json]
-   [clj-etl-utils.log   :as log])
+   [clj-etl-utils.log   :as log]
+   [rn.clorine.core     :as cl])
   (:use
    [clj-etl-utils.lang-utils :only [raise]]
    ring.adapter.jetty
@@ -148,9 +149,8 @@
                          (let [db-name  (:db-conn route-info db-name)
                                result   (if (= db-name :none)
                                           (handler-fn (assoc request :route-params route-params))
-                                          (raise "Clorine connections not yet implemented, must use :none for db-name (for now..)")
-                                          #_(cl/with-connection db-name
-                                              (handler-fn (assoc request :route-params route-params))))
+                                          (cl/with-connection db-name
+                                            (handler-fn (assoc request :route-params route-params))))
                                return   (assoc result :session @*session*)]
                            (if (and (:body return)
                                     (not (= String (class (:body return)))))

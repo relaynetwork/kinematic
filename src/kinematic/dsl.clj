@@ -43,8 +43,8 @@
 (defmacro dyn-handler [app-name]
   (let [config            (get-dispatch-config app-name)
         not-found-page    (get config :404-page "resources/public/404.html")
-        before-middleware (:before-middleware config)
-        after-middleware  (:after-middleware config)]
+        before-middleware (reverse (:before-middleware config))
+        after-middleware  (reverse (:after-middleware config))]
     `(-> (fn [req#]
            (let [resp# (ring.util.response/file-response ~not-found-page)]
              (assoc resp#
@@ -69,8 +69,7 @@
        (auto-routes ~app-name)
        (register-dispatcher ~app-name ~opts)
        (when (:log4j-config-file ~opts)
-         (load-log4j-file (:log4j-config-file ~opts)))
-       (start-dispatcher ~app-name))))
+         (load-log4j-file (:log4j-config-file ~opts))))))
 
 (defn wrap-stacktrace [handler]
   (fn [req]
