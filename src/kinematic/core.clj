@@ -2,13 +2,13 @@
   (:require
    [clojure.data.json   :as json]
    [clj-etl-utils.log   :as log]
-   [rn.clorine.core     :as cl])
+   [rn.clorine.core     :as cl]
+   clj-etl-utils.json)
   (:use
    [clj-etl-utils.lang-utils :only [raise]]
    ring.adapter.jetty
    kinematic.bindings
    clojure.tools.namespace))
-
 
 
 (defonce *routes* (atom {}))
@@ -31,9 +31,13 @@
     (raise "Error: %s is not a registered app: %s" app-name (keys @*routes*))
    (get @*routes* app-name {})))
 
+(defn before-filters [request route-info]
+  (concat
+   (get route-info :before-all [])
+   (get route-info (keyword (str "before-" (name (:request-method request)))) [])))
 
 (defn run-before-filters [request route-info]
-  (loop [[flt & flts] (:before-filters route-info)]
+  (loop [[flt & flts] (before-filters request route-info)]
     (if (not flt)
       nil
       (let [res (flt request)]
@@ -186,14 +190,8 @@
         resp
         (do
           (log/infof "Since no routes matched, deferring to %s(%s)" handler request)
-          (def *hh* handler)
-          (def *rr* request)
           (handler request))))))
 
-(comment
-
-  (*hh* *rr*)
-)
 
 (defn load-and-register [pfx]
   (doseq [target-ns
