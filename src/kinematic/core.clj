@@ -118,6 +118,7 @@
             (find-method-in-ns method handler-ns))
           [:get :post :put :delete :head :options :trace :connect]))
 
+
 (defn resolve-handler [db-name mount-point app-name request]
   (let [uri             (.substring (:uri request) (count mount-point))
         app-routes      (get @*routes* app-name)
@@ -157,8 +158,10 @@
                                             (handler-fn (assoc request :route-params route-params))))
                                return   (assoc result :session @*session*)]
                            (if (and (:body return)
-                                    (not (= String (class (:body return)))))
-                             (raise "Error in handler %s, did not result in a body of type String: %s" method-name (class (:body return)))
+                                    (not (= String (class (:body return))))
+                                    (not (= java.io.File (class (:body return))))
+                                    (not (isa? (class (:body return)) java.io.InputStream)))
+                             (raise "Error in handler %s, did not result in a body of type String/File/InputStream: %s" method-name (class (:body return)))
                              return))))
                      (catch Exception ex
                        (log/fatalf ex "API Request Failed Handler [%s] exception! : %s" route-info ex)
