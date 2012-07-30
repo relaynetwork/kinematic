@@ -5,7 +5,7 @@
   :plugins [[s3-wagon-private "1.1.1"]]
   :repositories {"releases" "s3p://relay-maven-repo/releases/"
                  "snapshots" "s3p://relay-maven-repo/snapshots/"}
-  :dependencies     [[org.clojure/clojure                  "1.3.0"]
+  :dependencies     [[org.clojure/clojure                  "1.2.0"]
                      [org.clojure/data.json                "0.1.2"]
                      [org.clojure/tools.namespace          "0.1.0"]
                      [ring/ring-core                       "1.1.0"]
