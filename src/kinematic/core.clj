@@ -1,8 +1,8 @@
 (ns kinematic.core
   (:require
-   [clojure.data.json   :as json]
-   [clj-etl-utils.log   :as log]
-   [rn.clorine.core     :as cl]
+   [clojure.contrib.json  :as json]
+   [clj-etl-utils.log     :as log]
+   [rn.clorine.core       :as cl]
    clj-etl-utils.json)
   (:use
    [clj-etl-utils.lang-utils :only [raise]]
