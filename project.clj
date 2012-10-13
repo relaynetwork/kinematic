@@ -1,10 +1,8 @@
 (defproject com.relaynetwork/kinematic "1.2.2-SNAPSHOT"
-  :description "Dynamic Web Development with Clojure"
-  :dev-dependencies [[swank-clojure                        "1.4.2"]]
+  :description          "Dynamic Web Development with Clojure"
+  :dev-dependencies     [[swank-clojure                        "1.4.2"]]
   :local-repo-classpath true
-  :plugins [[s3-wagon-private "1.1.1"]]
-  :repositories {"releases" "s3p://relay-maven-repo/releases/"
-                 "snapshots" "s3p://relay-maven-repo/snapshots/"}
+  :lein-release         {:deploy-vai :clojars}
   :dependencies     [[org.clojure/clojure                  "1.2.1"]
                      [org.clojure/clojure-contrib          "1.2.0"]
                      [org.clojure/tools.namespace          "0.1.0"]
