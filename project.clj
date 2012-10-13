@@ -1,4 +1,4 @@
-(defproject com.relaynetwork/kinematic "1.2.2"
+(defproject com.relaynetwork/kinematic "1.2.3-SNAPSHOT"
   :description          "Dynamic Web Development with Clojure"
   :dev-dependencies     [[swank-clojure                        "1.4.2"]]
   :local-repo-classpath true
