@@ -1,15 +1,12 @@
 (ns kinematic.core
   (:require
-   [clojure.contrib.json  :as json]
-   [clj-etl-utils.log     :as log]
-   [rn.clorine.core       :as cl]
-   clj-etl-utils.json)
+   [clojure.data.json     :as json]
+   [clj-etl-utils.log     :as log])
   (:use
    [clj-etl-utils.lang-utils :only [raise]]
    ring.adapter.jetty
    kinematic.bindings
    clojure.tools.namespace))
-
 
 (defonce *routes* (atom {}))
 
@@ -50,7 +47,7 @@
   (log/infof "checking authorization for request %s against route %s" request route-info)
   (let [users-roles (get @*session* :roles)
         users-roles (if users-roles
-                      (json/read-json users-roles)
+                      (json/read-str users-roles)
                       {})
         required-roles (:roles route-info)
         auth-fn        (:auth-fn route-info)]
@@ -107,7 +104,7 @@
 (defn respond-json [resp & [protocol-status]]
   {:status  (or protocol-status 200)
    :headers {"Content-Type" "application/json"}
-   :body    (json/json-str resp)})
+   :body    (json/write-str resp)})
 
 (defn find-method-in-ns [method handler-ns]
   (let [method-name (symbol (str (name method) "-req"))]
@@ -154,8 +151,7 @@
                          (let [db-name  (:db-conn route-info db-name)
                                result   (if (= db-name :none)
                                           (handler-fn (assoc request :route-params route-params))
-                                          (cl/with-connection db-name
-                                            (handler-fn (assoc request :route-params route-params))))
+                                          (handler-fn (assoc request :route-params route-params)))
                                return   (assoc result :session @*session*)]
                            (if (and (:body return)
                                     (not (= String (class (:body return))))
