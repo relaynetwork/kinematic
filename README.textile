@@ -1,3 +1,5 @@
+NB: this branch is for Clojure-1.2 support.
+
 h1. Overview
 
 Kinematic provides a simple library for doing dynamic web development with clojure. Although currently, it is mainly geared towards creating a JSON pump to your frontend API, it can be expanded in the future to be a more full-featured web development framework.
