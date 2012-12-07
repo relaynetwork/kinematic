@@ -22,15 +22,22 @@
     (get @*dyn-handlers* app-name)))
 
 (defn defapi [app-name patterns & opts]
-  (let [opts (apply hash-map opts)]
-    (register app-name (merge {:patterns patterns} opts))))
+  (let [opts (apply hash-map opts)
+        url-patterns (if (vector? patterns)
+                       patterns
+                       (vec (distinct (mapcat :patterns (vals patterns)))))]
+    (register
+     app-name
+     (merge {:patterns url-patterns
+             :methods  (when (map? patterns)
+                         patterns)}
+            opts))))
 
 (defn app-route-info [app-name]
   (reduce (fn [accum [route-name route-config]]
             (assoc accum
               route-name {:patterns          (:patterns route-config)
-                          :supported-methods (supported-methods (:ns route-config))
-                          }))
+                          :supported-methods (supported-methods route-config)}))
           {}
           (route-info app-name)))
 
@@ -38,7 +45,8 @@
   `(do
      (defapi ~app-name ["/routes"])
      (api-get
-       {:routes (app-route-info ~app-name)})))
+       {:routes   (app-route-info ~app-name)
+        :app-info (get-dispatch-config ~app-name)})))
 
 (defmacro dyn-handler [app-name]
   (let [config            (get-dispatch-config app-name)
