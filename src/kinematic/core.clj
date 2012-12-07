@@ -110,10 +110,19 @@
   (let [method-name (symbol (str (name method) "-req"))]
     (ns-resolve handler-ns method-name)))
 
-(defn supported-methods [handler-ns]
-  (filter (fn [method]
-            (find-method-in-ns method handler-ns))
-          [:get :post :put :delete :head :options :trace :connect]))
+(defn supported-methods [route-config]
+  (reduce
+   (fn [accum meth]
+     (assoc accum
+       meth (if-not (empty? (:methods route-config))
+              (get-in route-config [:methods meth])
+              {:patterns (:patterns route-config)})))
+   {}
+   (filter
+    (fn [method]
+      (find-method-in-ns method (:ns route-config)))
+    [:get :post :put :delete :head :options :trace :connect])))
+
 
 
 (defn resolve-handler [db-name mount-point app-name request]
