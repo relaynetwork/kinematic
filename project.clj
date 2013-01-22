@@ -6,6 +6,6 @@
   :dependencies     [[org.clojure/clojure                  "1.3.0"]
                      [org.clojure/data.json                "0.2.0"]
                      [org.clojure/tools.namespace          "0.1.0"]
-                     [ring/ring-core                       "1.1.0"]
-                     [ring/ring-jetty-adapter              "1.1.0"]
+                     [ring/ring-core                       "1.1.8"]
+                     [ring/ring-jetty-adapter              "1.1.8"]
                      [org.clojars.kyleburton/clj-etl-utils "1.3.6"]])
