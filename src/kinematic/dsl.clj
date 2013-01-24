@@ -44,9 +44,11 @@
 (defmacro auto-routes [app-name]
   `(do
      (defapi ~app-name ["/routes"])
+     ;; NB: need to come up with a better solution for before/after middleware.
+     ;; They are causing JSON parse errors. Just dissocing for now
      (api-get
        {:routes   (app-route-info ~app-name)
-        :app-info (get-dispatch-config ~app-name)})))
+        :app-info (dissoc (get-dispatch-config ~app-name) :before-middleware :after-middleware)})))
 
 (defmacro dyn-handler [app-name]
   (let [config            (get-dispatch-config app-name)
