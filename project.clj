@@ -1,4 +1,4 @@
-(defproject com.relaynetwork/kinematic "1.3.1"
+(defproject com.relaynetwork/kinematic "1.3.2-SNAPSHOT"
   :description          "Dynamic Web Development with Clojure"
   :url                  "http://github.com/relaynetwork/kinematic"
   :lein-release         {:deploy-via :clojars :scm :git}
@@ -6,7 +6,7 @@
   :java-source-path     "java"
   :local-repo-classpath true
 
-  :plugins [[lein-release/lein-release "1.0.4"]
+  :plugins [[lein-release/lein-release "1.0.5"]
             [lein-swank "1.4.5"]]
 
   :profiles             {:dev {:dependencies []}
