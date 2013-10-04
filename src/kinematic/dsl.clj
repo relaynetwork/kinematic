@@ -104,14 +104,14 @@
 
 (defmacro api-post [& body]
   `(defn ~'post-req [~'request]
-     (let [~'body  (json/read-str (slurp (:body ~'request)))
+     (let [~'body  (json/read-str (slurp (:body ~'request)) :key-fn keyword)
            result# (do
                      ~@body)]
        (respond-json result#))))
 
 (defmacro api-put [& body]
   `(defn ~'put-req [~'request]
-     (let [~'body  (json/read-str (slurp (:body ~'request)))
+     (let [~'body  (json/read-str (slurp (:body ~'request)) :key-fn keyword)
            result# (do
                      ~@body)]
        (respond-json result#))))

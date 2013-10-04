@@ -47,7 +47,7 @@
   (log/infof "checking authorization for request %s against route %s" request route-info)
   (let [users-roles (get @*session* :roles)
         users-roles (if users-roles
-                      (json/read-str users-roles)
+                      (json/read-str users-roles :key-fn keyword)
                       {})
         required-roles (:roles route-info)
         auth-fn        (:auth-fn route-info)]
