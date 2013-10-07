@@ -1,4 +1,4 @@
-(defproject com.relaynetwork/kinematic "1.3.4"
+(defproject com.relaynetwork/kinematic "1.3.5-SNAPSHOT"
   :description          "Dynamic Web Development with Clojure"
   :url                  "http://github.com/relaynetwork/kinematic"
   :lein-release         {:deploy-via :clojars :scm :git}
