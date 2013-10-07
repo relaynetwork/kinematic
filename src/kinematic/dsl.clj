@@ -21,17 +21,18 @@
     (raise "Error: no dispatcher registered for: %s" app-name)
     (get @*dyn-handlers* app-name)))
 
-(defn defapi [app-name patterns & opts]
-  (let [opts (apply hash-map opts)
-        url-patterns (if (vector? patterns)
-                       patterns
-                       (vec (distinct (mapcat :patterns (vals patterns)))))]
-    (register
-     app-name
-     (merge {:patterns url-patterns
-             :methods  (when (map? patterns)
-                         patterns)}
-            opts))))
+(defmacro defapi [app-name patterns & opts]
+  `(let [opts# (apply hash-map ~opts)
+         url-patterns# (if (vector? ~patterns)
+                         ~patterns
+                         (vec (distinct (mapcat :patterns (vals ~patterns)))))]
+     (register
+      ~app-name
+      (merge {:patterns url-patterns#
+              :methods  (when (map? ~patterns)
+                          ~patterns)
+              :options  '~opts}
+             opts#))))
 
 (defn app-route-info [app-name]
   (reduce (fn [accum [route-name route-config]]
@@ -47,8 +48,8 @@
      ;; NB: need to come up with a better solution for before/after middleware.
      ;; They are causing JSON parse errors. Just dissocing for now
      (api-get
-       {:routes   (app-route-info ~app-name)
-        :app-info (dissoc (get-dispatch-config ~app-name) :before-middleware :after-middleware)})))
+      {:routes   (app-route-info ~app-name)
+       :app-info (dissoc (get-dispatch-config ~app-name) :before-middleware :after-middleware)})))
 
 (defmacro dyn-handler [app-name]
   (let [config            (get-dispatch-config app-name)
