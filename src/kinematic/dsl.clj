@@ -22,7 +22,7 @@
     (get @*dyn-handlers* app-name)))
 
 (defmacro defapi [app-name patterns & opts]
-  `(let [opts# (apply hash-map ~opts)
+  `(let [opts# (hash-map ~@opts)
          url-patterns# (if (vector? ~patterns)
                          ~patterns
                          (vec (distinct (mapcat :patterns (vals ~patterns)))))]
