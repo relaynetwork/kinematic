@@ -1,0 +1,12 @@
+PUT and POST
+
+Defense against bad requests.
+
+* Instead of slurp, support a max request body size and only read up to that many bytes.
+
+* Be Opinionated: if the body is empty, or doesn't look like it's JSON
+  formatted i.e. doesn't start with '{', then return BadRequest and a
+  message indicating that it't not valid JSON for the framework.
+
+* If json/read-str throws an exception
+  return BadRequest with a message explaining that it's invalid JSON.
