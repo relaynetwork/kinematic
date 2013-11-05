@@ -48,8 +48,8 @@
      ;; NB: need to come up with a better solution for before/after middleware.
      ;; They are causing JSON parse errors. Just dissocing for now
      (api-get
-      {:routes   (app-route-info ~app-name)
-       :app-info (dissoc (get-dispatch-config ~app-name) :before-middleware :after-middleware)})))
+       {:routes   (app-route-info ~app-name)
+        :app-info (dissoc (get-dispatch-config ~app-name) :before-middleware :after-middleware)})))
 
 (defmacro dyn-handler [app-name]
   (let [config            (get-dispatch-config app-name)
@@ -91,6 +91,20 @@
        {:status 500}))))
 
 
+(defn read-body-as-json [request]
+  (def request request)
+  (try
+   [true
+    (json/read-str
+     (->
+      request
+      :body
+      slurp)
+     :key-fn keyword)]
+   (catch Exception ex
+     (log/infof ex "Error reading request body as json: %s :: " ex)
+     [false nil])))
+
 (defmacro api-get [& body]
   `(defn ~'get-req [~'request]
      (let [result# (do
@@ -105,14 +119,16 @@
 
 (defmacro api-post [& body]
   `(defn ~'post-req [~'request]
-     (let [~'body  (json/read-str (slurp (:body ~'request)) :key-fn keyword)
-           result# (do
-                     ~@body)]
-       (respond-json result#))))
+     (let [[status# ~'body]  (read-body-as-json ~'request)]
+       (if status#
+         (respond-json (do ~@body))
+         {:status 400
+          :body (json/write-str {:status "BadRequest"})}))))
 
 (defmacro api-put [& body]
   `(defn ~'put-req [~'request]
-     (let [~'body  (json/read-str (slurp (:body ~'request)) :key-fn keyword)
-           result# (do
-                     ~@body)]
-       (respond-json result#))))
+     (let [[status# ~'body]  (read-body-as-json ~'request)]
+       (if status#
+         (respond-json (do ~@body))
+         {:status 400
+          :body (json/write-str {:status "BadRequest"})}))))
