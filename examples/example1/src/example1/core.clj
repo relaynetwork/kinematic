@@ -4,8 +4,12 @@
    [kinematic.core :as kcore]
    [kinematic.dsl  :as kdsl]))
 
+;; TODO: kinematic was created for 'api first' web apps, to support
+;; (for the most part) single page apps.  The example should
+;; demonstrate that paradigm.
+
 ;; TODO: stop assuming Jetty
-;; TODO: How to mount at "/"
+;; TODO: Pattern matchers should collapse adjacent slashes
 ;; TODO: Mount multiple apps at distinct mount points.
 ;; TODO: Output Serializers:
 ;;   Dispatch Table based on the requested ContentType, there are several default behaviors:
@@ -14,6 +18,8 @@
 ;;      text/html:         takes whatever data strucutre the handler returns and does what?
 ;;      tex/plain:         takes whatever data strucutre the handler returns and calls str on it.
 ;; What's the minimum we can say to get an app up and running?
+
+;; TODO: how to bake in testing for kinematic?
 
 (kdsl/defweb :example1
   :mount-point       "/"
