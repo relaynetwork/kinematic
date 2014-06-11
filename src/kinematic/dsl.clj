@@ -67,6 +67,55 @@
           (get ~config :mount-point "/"))
          ~@before-middleware)))
 
+(defn app-handler [& app-names]
+  (let [apps (map
+              (fn [app-name]
+                (let [app-cfg           (get-dispatch-config app-name)
+                      not-found-page    (get app-cfg :404-page "resources/public/404.html")
+                      before-middleware (reverse (:before-middleware app-cfg))
+                      after-middleware  (reverse (:after-middleware app-cfg))
+                      mount-point       (:mount-point app-cfg "/")
+                      handler-fn        (fn [req]
+                                          (assoc (ring.util.response/file-response ~not-found-page)
+                                            :status 404))
+                      handler-fn        (reduce
+                                         (fn [acc mw]
+                                           (mw acc))
+                                         handler-fn
+                                         after-middleware)
+                      handler-fn         (make-dyn-dispatcher
+                                          handler-fn
+                                          app-name
+                                          (get app-cfg :db-name :none)
+                                          mount-point)
+                      handler-fn        (reduce
+                                         (fn [acc mw]
+                                           (mw acc))
+                                         handler-fn
+                                         before-middleware)]
+                  [mount-point
+                   handler-fn
+                   {:app-cfg           app-cfg
+                    :not-found-page    not-found-page
+                    :before-middleware before-middleware
+                    :after-middleware  after-middleware
+                    :handler-fn        handler-fn
+                    :mount-point       mount-point}]))
+              app-names)]
+    (fn [req]
+      (let [uri (:uri req)]
+       (loop [[app & apps] apps]
+         (let [[mount-point handler-fn app-cfg] app]
+           (cond
+             (not app)
+             nil     ;; not handled by us
+
+             (.startsWith uri mount-point)
+             (handler-fn req)
+
+             :no-match
+             (recur apps))))))))
+
 (defmacro start-dispatcher [app-name]
   `(restart-jetty-server (dyn-handler ~app-name)))
 
@@ -92,7 +141,6 @@
 
 
 (defn read-body-as-json [request]
-  (def request request)
   (try
    [true
     (json/read-str
