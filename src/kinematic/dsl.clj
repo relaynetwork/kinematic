@@ -76,7 +76,7 @@
                       after-middleware  (reverse (:after-middleware app-cfg))
                       mount-point       (:mount-point app-cfg "/")
                       handler-fn        (fn [req]
-                                          (assoc (ring.util.response/file-response ~not-found-page)
+                                          (assoc (ring.util.response/file-response not-found-page)
                                             :status 404))
                       handler-fn        (reduce
                                          (fn [acc mw]
