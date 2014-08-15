@@ -127,9 +127,7 @@
     `(do
        (load-and-register ~app-ns-prefix)
        (auto-routes ~app-name)
-       (register-dispatcher ~app-name ~opts)
-       (when (:log4j-config-file ~opts)
-         (load-log4j-file (:log4j-config-file ~opts))))))
+       (register-dispatcher ~app-name ~opts))))
 
 (defn wrap-stacktrace [handler]
   (fn [req]

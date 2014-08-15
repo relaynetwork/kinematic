@@ -212,17 +212,3 @@
      (catch Exception ex
        (log/fatalf ex "Error requiring: %s" target-ns)
        (throw (RuntimeException. (format "Error requiring: %s => %s" target-ns ex) ex))))))
-
-
-(defn load-log4j-file [log4j-prop-file]
-  (log/infof "Configuring log4j from %s\n" log4j-prop-file)
-  (if (.exists (java.io.File. log4j-prop-file))
-    (org.apache.log4j.PropertyConfigurator/configure
-     (doto (java.util.Properties.)
-       (.load (java.io.FileReader. log4j-prop-file))))
-    (with-open [res (.getResourceAsStream (class "") log4j-prop-file)]
-      (when (nil? res)
-        (raise "Error: log4j configuration not found as resource: %s" log4j-prop-file))
-      (let [p (doto (java.util.Properties.)
-                (.load res))]
-        (org.apache.log4j.PropertyConfigurator/configure p)))))
