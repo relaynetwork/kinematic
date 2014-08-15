@@ -1,7 +1,7 @@
 (ns kinematic.dsl
   (:require
    [clojure.data.json :as json]
-   [clj-etl-utils.log    :as log])
+   [clojure.tools.log    :as log])
   (:use
    [clj-etl-utils.lang-utils :only [raise]]
    kinematic.core
