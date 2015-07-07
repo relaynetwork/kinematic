@@ -68,7 +68,7 @@
          ~@before-middleware)))
 
 (defn app-handler [& app-names]
-  (let [apps (map
+  (let [apps (mapv
               (fn [app-name]
                 (let [app-cfg           (get-dispatch-config app-name)
                       not-found-page    (get app-cfg :404-page "resources/public/404.html")
