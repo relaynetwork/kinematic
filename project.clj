@@ -1,8 +1,10 @@
-(defproject com.relaynetwork/kinematic "1.3.13"
+(defproject com.relaynetwork/kinematic "1.3.14-SNAPSHOT"
   :description          "Dynamic Web Development with Clojure"
   :url                  "http://github.com/relaynetwork/kinematic"
-  :lein-release         {:deploy-via :clojars :scm :git}
-  :repositories         {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
+  :lein-release         {:scm :git}
+  :repositories         [["releases"  {:url "s3p://relay-maven-repo/releases/"  :creds :gpg}]
+                         ["snapshots" {:url "s3p://relay-maven-repo/snapshots/" :creds :gpg}]
+                         ["sonatype"  {:url "https://oss.sonatype.org/content/groups/public/"}]]
   :java-source-path     "java"
   :local-repo-classpath true
 
