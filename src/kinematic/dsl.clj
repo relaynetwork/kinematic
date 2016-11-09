@@ -154,27 +154,51 @@
 (defmacro api-get [& body]
   `(defn ~'get-req [~'request]
      (let [result# (do
-                     ~@body)]
-       (respond-json result#))))
+                     ~@body)
+           status-code# (:status-code result#)]
+       (if status-code#
+         (respond-json (dissoc result# :status-code)
+                       status-code#)
+         (respond-json result#)))))
 
 (defmacro api-delete [& body]
   `(defn ~'delete-req [~'request]
      (let [result# (do
-                     ~@body)]
-       (respond-json result#))))
+                     ~@body)
+           status-code# (:status-code result#)]
+       (if status-code#
+         (respond-json (dissoc result# :status-code)
+                       status-code#)
+         (respond-json result#)))))
 
 (defmacro api-post [& body]
   `(defn ~'post-req [~'request]
-     (let [[status# ~'body]  (read-body-as-json ~'request)]
-       (if status#
-         (respond-json (do ~@body))
-         {:status 400
-          :body (json/write-str {:status "BadRequest"})}))))
+     (let [[status# ~'body] (read-body-as-json ~'request)
+           result#          (do ~@body)
+           status-code#     (:status-code result#)]
+       (cond (not status#)
+             {:status 400
+              :body   (json/write-str {:status "BadRequest"})}
+
+             status-code#
+             (respond-json (dissoc result# :status-code)
+                           status-code#)
+
+             :old-behavior-with-200-status-code
+             (respond-json result#)))))
 
 (defmacro api-put [& body]
   `(defn ~'put-req [~'request]
-     (let [[status# ~'body]  (read-body-as-json ~'request)]
-       (if status#
-         (respond-json (do ~@body))
-         {:status 400
-          :body (json/write-str {:status "BadRequest"})}))))
+     (let [[status# ~'body] (read-body-as-json ~'request)
+           result#          (do ~@body)
+           status-code#     (:status-code result#)]
+       (cond (not status#)
+             {:status 400
+              :body   (json/write-str {:status "BadRequest"})}
+
+             status-code#
+             (respond-json (dissoc result# :status-code)
+                           status-code#)
+
+             :old-behavior-with-200-status-code
+             (respond-json result#)))))
