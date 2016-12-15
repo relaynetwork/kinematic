@@ -102,9 +102,11 @@
       (recur patterns (route-pattern-matches? uri route-mapping (first patterns))))))
 
 (defn respond-json [resp & [protocol-status]]
-  {:status  (or protocol-status 200)
-   :headers {"Content-Type" "application/json"}
-   :body    (json/write-str resp)})
+  (if (empty? resp)
+   {:status  (or protocol-status 200)}
+   {:status  (or protocol-status 200)
+    :headers {"Content-Type" "application/json"}
+    :body    (json/write-str resp)}))
 
 (defn find-method-in-ns [method handler-ns]
   (let [method-name (symbol (str (name method) "-req"))]
